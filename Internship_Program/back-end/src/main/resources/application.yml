@@ -10,5 +10,5 @@ spring:
     show-sql: true
 weavy:
   api:
-    key: "wys_5E5f0Q3532IJew32DfEGeIR8Uq0r5634qCRT"   # Replace with your actual API key
+    key: "wys_5E5f0Q3532IJew32DfEGeIR8Uq0r5634qCRT"
     url: "https://www.weavy.com/api/"
