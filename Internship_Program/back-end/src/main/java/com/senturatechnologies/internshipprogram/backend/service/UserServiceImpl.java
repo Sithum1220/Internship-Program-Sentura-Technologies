@@ -33,7 +33,12 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+            if (!response.isSuccessful()) {
+                System.out.println("Response Code: " + response.code());
+                System.out.println("Response Message: " + response.message());
+                System.out.println("Response Body: " + response.body().string());
+                throw new IOException("Unexpected code " + response);
+            }
             return response.body().string();
         }
     }

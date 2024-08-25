@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/hello_shoe_shop?createDatabaseIfNotExist=true
+    url: jdbc:mysql://localhost:3306/internship_program?createDatabaseIfNotExist=true
     username: root
     password: Sithum0506
     driver-class-name: com.mysql.cj.jdbc.Driver
