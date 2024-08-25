@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/internship_program?createDatabaseIfNotExist=true
+    url: jdbc:mysql://localhost:3306/hello_shoe_shop?createDatabaseIfNotExist=true
     username: root
     password: Sithum0506
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -8,3 +8,7 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+weavy:
+  api:
+    key: "wys_5E5f0Q3532IJew32DfEGeIR8Uq0r5634qCRT"   # Replace with your actual API key
+    url: "https://www.weavy.com/api/"

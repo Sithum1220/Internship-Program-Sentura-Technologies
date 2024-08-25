@@ -1,54 +1,105 @@
 package com.senturatechnologies.internshipprogram.backend.service;
 
-import com.senturatechnologies.internshipprogram.backend.dto.UserDTO;
 import com.senturatechnologies.internshipprogram.backend.entity.User;
-import com.senturatechnologies.internshipprogram.backend.repository.UserRepository;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import okhttp3.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.io.IOException;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final OkHttpClient client = new OkHttpClient();
 
-    @Autowired
-    private ModelMapper modelMapper;
+    @Value("${weavy.api.key}")
+    private String apiKey;
 
-    public List<UserDTO> getAllUsers() {
-        return userRepository.findAll()
-                .stream()
-                .map(user -> modelMapper.map(user, UserDTO.class))
-                .collect(Collectors.toList());
-    }
+    @Value("${weavy.api.url}")
+    private String baseUrl;
 
-    public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
-    }
+    @Override
+    public String createUser(User user) throws IOException {
+        String url = baseUrl + "users";
+        RequestBody body = new FormBody.Builder()
+                .add("name", user.getName())
+                .add("email", user.getEmail())
+                .build();
 
-    public User createUser(UserDTO userDTO) {
-        User user = modelMapper.map(userDTO, User.class);
-        return userRepository.save(user);
-    }
+        Request request = new Request.Builder()
+                .url(url)
+                .header("Authorization", "Bearer " + apiKey)
+                .post(body)
+                .build();
 
-    public User updateUser(Long id, UserDTO userDTO) {
-        Optional<User> userOptional = userRepository.findById(id);
-
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            modelMapper.map(userDTO, user);  // Map updated details from DTO to entity
-            return userRepository.save(user);
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+            return response.body().string();
         }
-
-        return null;
     }
 
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+    @Override
+    public String listUsers() throws IOException {
+        String url = baseUrl + "users";
+        Request request = new Request.Builder()
+                .url(url)
+                .header("Authorization", "Bearer " + apiKey)
+                .get()
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+            return response.body().string();
+        }
+    }
+
+    @Override
+    public String getUserDetails(String userId) throws IOException {
+        String url = baseUrl + "users/" + userId;
+        Request request = new Request.Builder()
+                .url(url)
+                .header("Authorization", "Bearer " + apiKey)
+                .get()
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+            return response.body().string();
+        }
+    }
+
+    @Override
+    public String updateUser(String userId, User user) throws IOException {
+        String url = baseUrl + "users/" + userId;
+        RequestBody body = new FormBody.Builder()
+                .add("name", user.getName())
+                .add("email", user.getEmail())
+                .build();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .header("Authorization", "Bearer " + apiKey)
+                .put(body)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+            return response.body().string();
+        }
+    }
+
+    @Override
+    public String deleteUser(String userId) throws IOException {
+        String url = baseUrl + "users/" + userId;
+        Request request = new Request.Builder()
+                .url(url)
+                .header("Authorization", "Bearer " + apiKey)
+                .delete()
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+            return response.body().string();
+        }
     }
 }
